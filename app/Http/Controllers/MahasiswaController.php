@@ -30,7 +30,28 @@ class MahasiswaController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validateData = $request->validate([
+            'tNpm' => 'required|unique:mahasiswas,npm|max:7',
+            'tNama' => 'required',
+            'tJk' => 'required',
+            'tAlamat' => 'required',
+        ],[],[
+            'tNpm' => 'NPM',
+            'tNama' => 'Nama',
+            'tJk' => 'Jenis Kelamin',
+            'tAlamat' => 'Alamat',
+        ]);
+
+        $mahasiswa = new Mahasiswa();
+
+        $mahasiswa->npm = $validateData['tNpm'];
+        $mahasiswa->nama = $validateData['tNama'];
+        $mahasiswa->jk = $validateData['tJk'];
+        $mahasiswa->alamat = $validateData['tAlamat'];
+
+        $mahasiswa->save();
+
+        return redirect()->route('mahasiswa.index')->with('message', 'Data Mahasiswa baru berhasil disimpan..');   
     }
 
     /**
@@ -63,5 +84,9 @@ class MahasiswaController extends Controller
     public function destroy(Mahasiswa $mahasiswa)
     {
         //
+    }
+
+    public function formAdd(){
+        return Inertia::render('Mahasiswa/form_add');
     }
 }

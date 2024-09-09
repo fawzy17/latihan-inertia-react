@@ -1,10 +1,20 @@
 import React from 'react';
+import { Link } from '@inertiajs/inertia-react';
+import { usePage } from '@inertiajs/inertia-react';
 
 export default function index({ mahasiswa }) {
+    const { flash } = usePage().props;
     return (
         <div>
             <h3>Data Mahasiswa</h3>
             <hr />
+            <Link as='button' type='button' href='mahasiswa/add' style={{ background: 'green', color: 'white', marginBottom: 10 }}>
+                Tambah data
+            </Link>
+
+            {
+                flash && flash.message && <div style={{ fontWeight: 'bold', color: 'green', marginBottom: 10 }}>{flash.message}</div>
+            }
 
             <table border={1} cellPadding={5} style={{
                 borderCollapse: 'collapse'
