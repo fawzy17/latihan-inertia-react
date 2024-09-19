@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from '@inertiajs/inertia-react';
 import { usePage } from '@inertiajs/inertia-react';
 import { Inertia } from '@inertiajs/inertia';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 export default function index({ mahasiswa, filters }) {
     const { flash } = usePage().props;
@@ -27,10 +28,10 @@ export default function index({ mahasiswa, filters }) {
     console.log(mahasiswa)
 
     return (
-        <div>
+        <div className='container container-fluid'>
             <h3>Data Mahasiswa</h3>
             <hr />
-            <Link as='button' type='button' href='mahasiswa/add' style={{ background: 'green', color: 'white', marginBottom: 10 }}>
+            <Link className='btn btn-sm btn-primary' as='button' type='button' href='mahasiswa/add' style={{ marginBottom: 10 }}>
                 Tambah data
             </Link>
 
@@ -38,12 +39,14 @@ export default function index({ mahasiswa, filters }) {
                 flash && flash.message && <div style={{ fontWeight: 'bold', color: 'green', marginBottom: 10 }}>{flash.message}</div>
             }
             <form onSubmit={searchData}>
-                <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} />
-                <button type='submit'>Cari</button>
+                <div class="input-group mb-3">
+                    <div className='col-mb-4'>
+                        <input type="text" class="form-control" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Cari NPM atau Nama" />
+                    </div>
+                    <button class="btn btn-outline-secondary" type="submit" id="button-addon2">Cari</button>
+                </div>
             </form>
-            <table border={1} cellPadding={5} style={{
-                borderCollapse: 'collapse'
-            }}>
+            <table class="table table-bordered table-stripped table-sm">
                 <thead>
                     <tr>
                         <th>No</th>
@@ -68,8 +71,8 @@ export default function index({ mahasiswa, filters }) {
                                 <td>{mhs.jk == 'L' ? 'Laki-laki' : 'Perempuan'}</td>
                                 <td>{mhs.alamat}</td>
                                 <td>
-                                    <button onClick={() => updateData(mhs.id)} style={{ marginRight: 5 }}>Edit</button>
-                                    <button onClick={() => deleteData(mhs.id, mhs.nama)}>Delete</button>
+                                    <button className='btn btn-sm btn-warning' onClick={() => updateData(mhs.id)} style={{ marginRight: 5 }}>Edit</button>
+                                    <button className='btn btn-sm btn-danger' onClick={() => deleteData(mhs.id, mhs.nama)}>Delete</button>
                                 </td>
                             </tr>
                         ))
@@ -78,25 +81,28 @@ export default function index({ mahasiswa, filters }) {
                 </tbody>
             </table>
 
-            <div style={{ marginTop: 10 }}>
-                {mahasiswa.links.map((link, index) => {
-                    let isActive = link.active;
+            <div style={{ marginTop: 5 }}>
+                <ul class="pagination">
+                    {mahasiswa.links.map((link, index) => {
 
-                    const linkActive = isActive ? { fontWeight: 'bold', textDecoration: 'underline', marginRight: 5 } : { marginRight: 5 };
+                        if (link.url === null) {
+                            return null;
+                        }
 
-                    let linkLabel = link.label;
-                    if (linkLabel.includes('raquo')) {
-                        linkLabel = 'Next >>';
-                    }
-                    if (linkLabel.includes('laquo')) {
-                        linkLabel = '<< Prev';
-                    }
-                    return (
-                        <button key={index} onClick={() => Inertia.get(link.url)} style={linkActive} disabled={isActive} >
-                            {linkLabel}
-                        </button>
-                    )
-                })}
+                        let isActive = link.active;
+
+                        let className = isActive ? "page-item active" : "page-item";
+                        let linkLabel = link.label.replace(/&laquo;/, "<<").replace(/&raquo;/, ">>");
+
+                        return (
+                            <li className={className} key={index}>
+                                <a className="page-link" disabled={isActive} onClick={() => Inertia.get(link.url)}>
+                                    {linkLabel}
+                                </a>
+                            </li>
+                        )
+                    })}
+                </ul>
             </div>
         </div>
     )
